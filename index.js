@@ -51,6 +51,10 @@ app.get('/', (req, res) => {
     res.send('Running Server');
 });
 
+app.get('/ssd', (req, res) => {
+    res.send('Running ssd Server');
+});
+
 
 app.listen(port, () => {
     console.log('Listening to port', port);
