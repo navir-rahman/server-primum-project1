@@ -3,9 +3,9 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
-
 const app = express();
-
+app.use(cors())
+app.use(express.json());
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@cluster0.lo1ih.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -13,38 +13,32 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const serviceCollection = client.db('geniusCar').collection('service');
+        const taskCollection = client.db('taskList').collection('task');
 
 
-        // SERVICES API
-        app.get('/service', async (req, res) => {
+        // taskS API
+        app.get('/task', async (req, res) => {
             const query = {};
-            const cursor = serviceCollection.find(query);
-            const services = await cursor.toArray();
-            res.send(services);
+            const cursor = taskCollection.find(query);
+            const tasks = await cursor.toArray();
+            res.send(tasks);
         });
 
         // POST
-        app.post('/service', async (req, res) => {
-            const newService = req.body;
-            const result = await serviceCollection.insertOne(newService);
+        app.post('/task', async (req, res) => {
+            const newtask = req.body;
+            
+            const result = await taskCollection.insertOne(newtask);
             res.send(result);
         });
 
         // DELETE
-        app.delete('/service/:id', async (req, res) => {
+        app.delete('/task/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await serviceCollection.deleteOne(query);
+            const result = await taskCollection.deleteOne(query);
             res.send(result);
         });
-
-        app.post('/order', async (req, res) => {
-            const order = req.body;
-            const result = await orderCollection.insertOne(order);
-            res.send(result);
-        })
-
     }
     finally {
 
